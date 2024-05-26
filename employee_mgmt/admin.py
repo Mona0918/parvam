@@ -3,6 +3,7 @@ from .models import Employee, Skill
 
 class EmployeeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['skills']
+    list_display = ['first_name','last_name','email_id']
 
 class SkillAdmin(admin.ModelAdmin):
     search_fields = ['name']
@@ -10,6 +11,6 @@ class SkillAdmin(admin.ModelAdmin):
         results = super().get_search_results(request, queryset, search_term)
         return results
 
-admin.site.register(Employee)
-admin.site.register(Skill)
+admin.site.register(Employee, EmployeeAdmin)
+admin.site.register(Skill, SkillAdmin)
 

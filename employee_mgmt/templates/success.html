@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/global.css'%}">
+</head>
+<body>
+    <h3>Welcome, Your form submitted successfully</h3>
+    <div style="padding:2em">
+        {% for employee in employee_data%}
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr;gap:2em;padding:1em">
+                <div>{{employee.first_name}} {{employee.last_name}}</div>
+                {{employee.email_id}}
+                <div>
+                    {% for skill in employee.skills %}
+                        {% if forloop.last%}
+                            {{skill.name}}
+                        {% else %}
+                            {{skill.name}},
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div style="display:flex;gap:1em">
+                    <button id="update"><a href="{% url 'emp-update' employee.id %}" >Update </a></button>
+                    <button id="delete"><a href="{% url 'emp-delete' employee.id %}" >Delete </a></button>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+    <center><button id="add"><a href="{% url 'employee-form' %}">Add Employee</a></button></center>
+</body>
+</html>

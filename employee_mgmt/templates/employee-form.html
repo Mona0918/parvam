@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Form</title>
+    <link rel="stylesheet" href="{% static 'css/global.css'%}" />
+  </head>
+  <body>
+    <h1>Employee Management</h1>
+    <form method="POST">
+      {% csrf_token %} {% for field in employee_form %}
+      <label id="{{field.id_for_label}}">{{field.label}}</label><br />
+      {{field}}<br />
+      {{field.errors}} {% endfor %} {{skill_form.as_p}}
+      <ul id="auto-suggest"></ul>
+      <br />
+      <br />
+      <center><button>Submit</button></center>
+    </form>
+    <p>{{data.email_id}} - {{data.skills.all}}</p>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const inputField = document.querySelector("#id_name");
+      const skillList = document.querySelector("#auto-suggest");
+      inputField.addEventListener("input", function () {
+        let inputValue = inputField.value;
+        let val =
+          inputValue.lastIndexOf(",") > 0
+            ? inputValue.substr(inputValue.lastIndexOf(",") + 1).trim()
+            : inputValue;
+        let validSkills = inputValue.substr(0, inputValue.lastIndexOf(",") + 1);
+        if (val.length >= 3) {
+          skillList.style.display = "block";
+          skillList.innerHTML = "";
+          fetch(`/skill_suggestion/${val}/`)
+            .then((response) => response.json())
+            .then((data) => {
+              data.forEach((skill) => {
+                const li = document.createElement("li");
+                li.style.listStyleType = "none";
+                skillList.marginTop = "-10px";
+                if (validSkills.split(",").indexOf(val) === -1) {
+                  li.textContent = skill.name;
+                  li.addEventListener("click", function () {
+                    if (validSkills.split(",").indexOf(skill.name) === -1) {
+                      inputField.value = validSkills + skill.name;
+                    }else{
+                        inputField.value = validSkills;
+                    }
+                    skillList.style.display = "none";
+                    skillList.textContent = "";
+                    li.textContent = "";
+                    skillList.style.listStyleType = "none";
+                    li.style.listStyleType = "none";
+                    val = "";
+                  });
+                  skillList.appendChild(li);
+                }
+              });
+            });
+        } else {
+          skillList.innerHTML = "";
+        }
+      });
+    });
+  </script>
+</html>

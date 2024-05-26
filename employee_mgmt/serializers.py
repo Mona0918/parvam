@@ -9,16 +9,11 @@ class SkillSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    skills=SkillSerializer(many=True)
+    skills=SkillSerializer(many=True, required=False)
     class Meta:
         model = Employee
         fields=['id','first_name','last_name','email_id','skills']
 
-    def __init__(self, *args, **kwargs):
-        super(EmployeeSerializer, self).__init__(*args, **kwargs)
-        request = self.context.get('request')
-        if request and request.method in ['POST','PUT']:
-            self.fields['skills']=serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
 
     
 
